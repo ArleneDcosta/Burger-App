@@ -29,7 +29,9 @@ class BurgerBuilder extends Component{
 	}
 
 	updatePurchaseState(){
-		
+		const ingredients={
+			...this.state.ingredients
+		};
 	}
 
 	addIngredientHandler = (type) => {
