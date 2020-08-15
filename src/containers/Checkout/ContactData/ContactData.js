@@ -15,6 +15,10 @@ class ContactData extends Component{
                         placeholder : 'Enter Your Name'
                     },
                     value:"",
+                    validation:{
+                        required:true
+                    },
+                    valid : false
                 },
                 street:{
                     elementType : 'input',
@@ -23,6 +27,10 @@ class ContactData extends Component{
                         placeholder : 'Enter Your Street'
                     },
                     value:"",
+                    validation:{
+                        required:true
+                    },
+                    valid : false
                 },
                 zipcode :{
                     elementType : 'input',
@@ -30,7 +38,13 @@ class ContactData extends Component{
                         type : 'text',
                         placeholder : 'Enter Your Code'
                     },
-                    value:""
+                    value:"",
+                    validation:{
+                        required:true,
+                        minLength : 5,
+                        maxLength : 5,
+                    },
+                    valid : false
                 },
                 country : {
                     elementType : 'input',
@@ -38,7 +52,11 @@ class ContactData extends Component{
                         type : 'text',
                         placeholder : 'Enter Your Country'
                     },
-                    value:""
+                    value:"",
+                    validation:{
+                        required:true
+                    },
+                    valid : false
                 },
                 email : {
                     elementType : 'input',
@@ -46,7 +64,11 @@ class ContactData extends Component{
                         type : 'email',
                         placeholder : 'Enter Your Email'
                     },
-                    value:""
+                    value:"",
+                    validation:{
+                        required:true
+                    },
+                    valid : false
                 },
                 deliveryMethod : {
                     elementType : 'select',
@@ -54,8 +76,8 @@ class ContactData extends Component{
                         options : [{ value: 'fastest', displayValue : 'Fastest'},
                                    { value: 'cheapest', displayValue : 'Cheapest'}]
                     },
-                    value:""
-                }
+                    value:"",
+                    }
         },
         loading:false
     }
@@ -83,15 +105,32 @@ class ContactData extends Component{
 	});
     }
 
-    inputChangedHandler = (event,inputIdentifier) => {
-        const updatedOrderForm = {
-            ...this.stateOrderForm
+    checkValidity(value,rules){
+        let isValid = true;
+        if(rules.required){
+            isValid = value.trim() !== '' && isValid;
         }
+        if(rules.minLength){
+            isValid = value.length >= rules.minLength && isValid;
+        }
+        if(rules.maxLength){
+            isValid = value.length <= rules.minLength && isValid;
+        }
+        return isValid;
+    }
+
+    inputChangedHandler = (event,inputIdentifier) => {
+
+        const updatedOrderForm = {
+            ...this.state.orderForm
+        };
         const updatedFormElement = {
             ...updatedOrderForm[inputIdentifier] 
-        }
+        };
         updatedFormElement.value = event.target.value;
-        updatedFormElement[inputIdentifier] = updatedFormElement;
+        updatedFormElement.valid = this.checkValidity(updatedFormElement.value,updatedFormElement.validation)
+        updatedOrderForm[inputIdentifier] = updatedFormElement;
+        console.log(updatedFormElement);
         this.setState({orderForm:updatedOrderForm});
     }
 
@@ -102,6 +141,7 @@ class ContactData extends Component{
                 id:key,
                 config:this.state.orderForm[key]
             });
+        
         }
         let form = (
             <form onSubmit={this.orderHandler}>
